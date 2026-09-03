@@ -78,13 +78,11 @@ useEffect(() => {
 
 | AI tool used | Purpose | Prompt used | Did you use the output "as is" or modify it? How? |
 |---|---|---|---|
-|  |  |  |  |
-
-*If no AI was used this module, state that explicitly here instead of the table.*
+| Claude | Step-by-step guidance building ScoreBoard, UserForm, DataFetcher, and LiveClock components | Asked for the tutorial steps to be broken down one at a time and for code to paste for each component | Modified: adjusted and corrected the pasted code myself before it worked correctly, including fixing duplicated imports/declarations in App.jsx and server.js caused by paste errors, and verifying each component's behaviour in the browser before moving on |
 
 ### Analysis and Implications
 
-**Reflection:** This module clarified why React can't just watch for changes to ordinary variables and why state, the setter function, and re-renders are treated as a single package. The trickiest part was the batching behaviour behind functional updates (`prevScore => prevScore + 5`) — it wasn't obvious until seeing what happens when you call a setter multiple times using the raw variable instead. <!-- Add your own AI usage notes here if applicable -->
+**Reflection:** This module clarified why React can't just watch for changes to ordinary variables and why state, the setter function, and re-renders are treated as a single package — I hadn't previously registered that a "re-render" is a distinct, triggerable event rather than something that just happens automatically whenever a variable's value changes. The part I was most confused by was the batching behaviour behind functional updates (`prevScore => prevScore + 5`): I could follow the mechanical fix, but it took deliberately breaking it (calling `setScore(score + 1)` multiple times in a row) to actually see why the raw-variable version silently fails. Using Claude for step-by-step guidance sped up getting the code in correctly, but it also meant I encountered fewer of my own bugs organically — the two paste-duplication errors I did hit (in App.jsx and server.js) were more instructive for understanding how the file actually executes than the working code itself, which suggests the copy-paste workflow may have thinned out some of the productive struggle the exercise was designed to create.
 
 
 ---
@@ -164,10 +162,8 @@ app.post('/api/search', (req, res) => {
 
 | AI tool used | Purpose | Prompt used | Did you use the output "as is" or modify it? How? |
 |---|---|---|---|
-|  |  |  |  |
-
-*If no AI was used this module, state that explicitly here instead of the table.*
+| Claude | Step-by-step guidance setting up the Express server, routes, and package.json configuration | Asked for the tutorial steps broken down one at a time, and code to paste for server.js and package.json | Modified: adjusted and corrected the pasted code myself before it worked, including fixing a duplicated import/app/listen block in server.js caused by a paste error, and testing each route with the REST Client extension before moving on to the next task |
 
 ### Analysis and Implications
 
-**Reflection:** This module made the request-response cycle concrete — seeing `req` and `res` actually populated by Express for a real request clarified what those objects represent, rather than treating them as abstract parameters. The most useful realisation was that middleware like `express.json()` isn't optional boilerplate; without it `req.body` is simply undefined, which explained why POST routes silently fail if middleware is missed. <!-- Add your own AI usage notes here if applicable -->
+**Reflection:** This module made the request-response cycle concrete — seeing `req` and `res` actually populated by Express for a real request clarified what those objects represent, rather than treating them as abstract parameters passed into a function. The most useful realisation was that middleware like `express.json()` isn't optional boilerplate; without it `req.body` is simply undefined, which explained why a POST route can silently fail to read incoming data if the middleware line is missed or placed after the route definitions. Debugging the duplicated code from the paste error in server.js was more useful for understanding Express's startup sequence than the working code was, since tracing why the server wouldn't restart cleanly forced me to actually read through what each line was doing rather than assuming it was correct.
