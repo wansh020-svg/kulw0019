@@ -1,0 +1,173 @@
+### Variables
+@baseUrl = http://localhost:5100/api/users
+@postUrl = http://localhost:5100/api/posts
+# The email address used to test the Read Single, Update, and Delete routes below
+@userEmail = jane.doe@example.com
+# The postID used to test the Read Single, Update, and Delete post routes below
+@postID = 1
+
+############################################################
+# USERS
+############################################################
+
+### 1a. Create User 1 (POST)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com"
+}
+
+### 1b. Create User 2 (POST)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "email": "john.smith@example.com"
+}
+
+### 1c. Create User 3 (POST)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "Alice Johnson",
+  "email": "alice.j@example.com"
+}
+
+
+### 2. Get All Users (GET)
+# This should return a 200 status and an array containing the three users above.
+GET {{baseUrl}}
+
+
+### 3. Get a Single User by Email (GET)
+# This uses the @userEmail variable (jane.doe@example.com)
+# Should return a 200 status and Jane's user object.
+GET {{baseUrl}}/{{userEmail}}
+
+
+### 4. Update a User by Email (PUT)
+# This updates Jane's name. It should return a 200 status and the UPDATED user object.
+PUT {{baseUrl}}/{{userEmail}}
+Content-Type: application/json
+
+{
+  "name": "Jane Doe-Smith",
+  "email": "jane.doe@example.com"
+}
+
+### 5. Delete a User by Email (DELETE)
+# This will delete Jane. It should return a 200 status and the deleted user object.
+DELETE {{baseUrl}}/{{userEmail}}
+
+
+### 6. Test the "Null Check" (GET - 404 Not Found)
+# Tests looking for an email that does not exist in the database.
+GET {{baseUrl}}/nobody.home@example.com
+
+
+### 7. Null Check on Update (PUT - 404 Not Found)
+PUT {{baseUrl}}/nobody.home@example.com
+Content-Type: application/json
+
+{
+  "name": "Nobody Home"
+}
+
+### 8. Null Check on Delete (DELETE - 404 Not Found)
+DELETE {{baseUrl}}/nobody.home@example.com
+
+
+############################################################
+# POSTS
+############################################################
+
+### P1a. Create Post 1 (POST)
+POST {{postUrl}}
+Content-Type: application/json
+
+{
+  "title": "Welcome",
+  "content": "First message on the bulletin board!",
+  "postID": 1
+}
+
+### P1b. Create Post 2 (POST)
+POST {{postUrl}}
+Content-Type: application/json
+
+{
+  "title": "Lost Umbrella",
+  "content": "Left a blue umbrella in the library. Please message me if found.",
+  "postID": 2
+}
+
+### P1c. Create Post 3 (POST)
+POST {{postUrl}}
+Content-Type: application/json
+
+{
+  "title": "Study Group",
+  "content": "Anyone keen for a Node.js study group on Friday?",
+  "postID": 3
+}
+
+### P2. Get All Posts (GET)
+# Should return a 200 status and an array containing the three posts above.
+GET {{postUrl}}
+
+### P3. Get a Single Post by postID (GET)
+# Should return a 200 status and the post with postID 1.
+GET {{postUrl}}/{{postID}}
+
+### P4. Update a Post by postID (PUT)
+# Should return a 200 status and the UPDATED post object.
+PUT {{postUrl}}/{{postID}}
+Content-Type: application/json
+
+{
+  "title": "Welcome (edited)",
+  "content": "First message on the bulletin board, now with an edit!"
+}
+
+### P5. Delete a Post by postID (DELETE)
+# Should return a 200 status and the deleted post object.
+DELETE {{postUrl}}/{{postID}}
+
+### P6. Null Check on Read (GET - 404 Not Found)
+GET {{postUrl}}/999
+
+### P7. Null Check on Update (PUT - 404 Not Found)
+PUT {{postUrl}}/999
+Content-Type: application/json
+
+{
+  "title": "Ghost post"
+}
+
+### P8. Null Check on Delete (DELETE - 404 Not Found)
+DELETE {{postUrl}}/999
+
+### P9. Validation Failure (POST - 400 Bad Request)
+# Missing the required title, so Mongoose should throw a validation error.
+POST {{postUrl}}
+Content-Type: application/json
+
+{
+  "content": "No title here",
+  "postID": 50
+}
+
+### P10. Duplicate postID (POST - 400 Bad Request)
+# postID 2 already exists, so the unique index should reject this.
+POST {{postUrl}}
+Content-Type: application/json
+
+{
+  "title": "Duplicate",
+  "content": "Reusing an existing postID",
+  "postID": 2
+}
